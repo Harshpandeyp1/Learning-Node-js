@@ -53,7 +53,7 @@ app.get("/users", async (req, res) => {
     });
   }
 })
-app.get("/users", async (req, res)=>{
+app.get("/getUsers", async (req, res)=>{
   try{
     const userId=req.params.id;
     const  user=await User.findById(userId);
@@ -66,6 +66,42 @@ app.get("/users", async (req, res)=>{
       message:"Internal server error",
       error:error.message,
     })
+  }
+})
+
+app.put("/updateUsers/:id",async(req,res)=>{
+    try{
+      const {name,email,password,age}=req.body;
+      const {id}=req.params;
+      const updateUser=await User.findUserByIdAndUpdate(
+         id,
+         {name,email,password,age},
+         {new:true}
+      );
+    return res.status(200).json({ message:"update successful",
+   user:updateUser});
+   
+
+    }catch(err)
+{
+  return res.status(500).json({
+     message:"Server error",
+  error:err.message});
+  }
+   
+})
+
+app.delete("/deleteUser/:id",async(req,res)=>{
+  try{
+    const {id}=req.params;
+    await User.findByIdAndDelete(id);
+    return res.status(200).json({
+      message:"id deleted",
+    })
+  }catch(err){
+      return res.status(500).json({
+     message:"Server error",
+  error:err.message});
   }
 })
   
